@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+import fns from './utils/functions';
 
 
 class App extends Component {
@@ -23,18 +24,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/cars').then( data => {
-      this.setState({
-        cars: data.data
+    fns.getCars('/api/cars').then(carsObj => {
+      this.setState ({
+        cars: carsObj
       })
     })
   }
 
   filterCarsById() {
     console.log('running')
-    const car = this.state.cars.filter( car => {
-      return car.id === parseInt(this.input.value)
-    })
+    const car = fns.filterById(this.state.cars, this.input.value)
     console.log(car)
     this.setState({
       carById: car
@@ -42,9 +41,11 @@ class App extends Component {
   }
 
   filterByColor(e) {
-    const cars = this.state.cars.filter( car => {
-      return car.color === e.target.value
-    })
+    // const cars = this.state.cars.filter( car => {
+    //   return car.color === e.target.value
+    // })
+
+    const cars = fns.filterByColor(this.state.cars, e.target.value)
     this.setState({
       carsByColor: cars
     })
@@ -52,33 +53,40 @@ class App extends Component {
 
   randomNum() {
     this.setState({
-      randomNum: Math.floor(Math.random() * 10) + 1
+      randomNum: fns.randomNum()
     })
   }
 
-  battle() {
-    console.log('running')
+  // battle() {
+  //   console.log('running')
+    
+  //   while(elfHealth > 0 || orcHealth > 0) {
+  //     console.log('elf', elfHealth, 'orc', orcHealth)
+  //     orcHealth -= elfAttack;
+  //     if (orcHealth<= 0) {
+  //       this.setState({
+  //         winner: 'Elf'
+  //       })
+  //       return;
+  //     }
+  //     elfHealth -= orcAttack;
+  //     if (elfHealth <= 0) {
+  //       this.setState({
+  //         winner: 'Orc'
+  //       })
+  //       return;
+  //     }
+  //   }
+  // }
+
+  battle(){
     let elfHealth = parseInt(this.elfH.value);
     let elfAttack = parseInt(this.elfA.value);
     let orcAttack = parseInt(this.orcA.value);
     let orcHealth = parseInt(this.orcH.value);
-    while(elfHealth > 0 || orcHealth > 0) {
-      console.log('elf', elfHealth, 'orc', orcHealth)
-      orcHealth -= elfAttack;
-      if (orcHealth<= 0) {
-        this.setState({
-          winner: 'Elf'
-        })
-        return;
-      }
-      elfHealth -= orcAttack;
-      if (elfHealth <= 0) {
-        this.setState({
-          winner: 'Orc'
-        })
-        return;
-      }
-    }
+    this.setState({
+      winner: fns.battle(elfHealth, elfAttack, orcAttack, orcHealth)
+    })
   }
   
   toggleCheck() {
